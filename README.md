@@ -102,3 +102,24 @@ You directly get this as output
 ```
 
 </details>
+
+You can also prepare the XSE as a `store.xse.json`
+
+```json
+{
+  "store_name": "//h1",
+  "catalog": [
+    "//div[@class='product']",
+    {
+      "name": ".//h2",
+      "price": ".//span[@class='p']",
+      "tags": [
+        ".//li",
+        "."
+      ]
+    }
+  ]
+}
+```
+
+but, as you can see, YAML is less verbose.
