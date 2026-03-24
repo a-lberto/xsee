@@ -1,18 +1,36 @@
 # XPath Structured Extraction
 
-> XSE is to HTML what SQL is to Databases: A declarative way to query and shape unstructured web data into structured objects.
+> XSE is to HTML what SQL is to Databases: A declarative way to query and shape unstructured (or deliberately obfuscated) web data into structured objects.
 
 XSE replaces procedural scraping scripts with a **structural contract**, treating the DOM as a queryable data source.
 
+XSE is text first, and explicitly does no data processing other than extracting raw information for the DOM. Processing is left to be done to other tools of your choice.
+
+XSE uses XPath 1.0 for best portability. The implementation of XSE applies a `normalize-space()` to the string extracted.
+
 ---
 
-## The rules
+## The patterns
 
-An XSE map is composed of three primitive structures used to extract text from the DOM:
+XSE uses three simple patterns to map DOM elements to data:
 
-1. Leaf (String): A key-value pair where the value is a valid XPath targeting a single value.
-2. Scope (Object): A nested object used to group related data. To ensure encapsulation, all internal XPaths must be relative to the parent node.
-3. Iterator (Array): A pair defined as `["xpath", {template}]`. It iterates over every match of the XPath, applying the template to each instance.
+1. **Leaf**: `key: "xpath"` e.g. `title: "//h1"`, `url : "//a/@href"`
+   
+   Extracts **only** the `textContent` of the first matching node or its first XPath attribute selector (e.g., `@src`, `@href`, `@content`). Returns `null` if not found.  
+   
+2. **Group**: `key: {group}` e.g. `meta: { author: "//span", date: "//time" }`
+
+   Used to group related data.
+   
+3. **Iterator**: `key: ["selector", "extractor"]` 
+   e.g. `related_articles: [ "//li", ".//a/@href" ]`
+
+   This is the only allowed type of list (2-tuple). Iterates over all objects in the DOM found by the **first** XPath _selector_ and applies the **second** _extractor_ to each element.
+   
+   The extractor can be either a single `"xpath"` or a `{group}`.
+   Extraction XPaths must use the `./` or `.//` relative prefix to remain relative to the parent and prevent context leak (the engine must enforce this by throwing an error).
+   
+   If selector finds no results, returns `[]`, if extractor finds no results, it returns `[]`. Leafs inside groups are handled normally as `null` when leaf is not found.
 
 ---
 
@@ -73,9 +91,7 @@ catalog:
   - "//div[@class='product']"    # Iterator: Find all product containers
   - name: ".//h2"                # Relative Leaf: Extract title
     price: ".//span[@class='p']" # Relative Leaf: Extract price
-    tags:                        # Nested Iterator:
-      - ".//li"                  # Find all list items
-      - "."                      # Extract current node text
+    tags: [ ".//li",  "." ]
 ```
 
 You directly get this as output
@@ -104,7 +120,9 @@ You directly get this as output
 </details>
 
 You can also prepare the XSE as a `store.xse.json`
-
+<details>
+<summary><b>View XSE as JSON</b></summary>
+  
 ```json
 {
   "store_name": "//h1",
@@ -122,4 +140,6 @@ You can also prepare the XSE as a `store.xse.json`
 }
 ```
 
-but, as you can see, YAML is less verbose.
+</details>
+
+But life is too short to debug opening and closing braces and commas for a scraping recipe.
