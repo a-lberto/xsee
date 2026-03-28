@@ -1,0 +1,6 @@
+store_name: "//h1"
+catalog:
+  - "//div[contains(@class, 'product')]"
+  - name: ".//h2"
+    price: ".//span[@class='p']"
+    tags: [ ".//li", "." ]

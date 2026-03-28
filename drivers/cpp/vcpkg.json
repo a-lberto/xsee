@@ -1,0 +1,9 @@
+{
+  "name": "xse-cpp",
+  "version-string": "0.1.0",
+  "dependencies": [
+    "libxml2",
+    "nlohmann-json",
+    "yaml-cpp"
+  ]
+}

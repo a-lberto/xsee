@@ -1,0 +1,15 @@
+{
+  "store_name": "Tech Gadget Emporium",
+  "catalog": [
+    {
+      "name": "Mechanical Keyboard",
+      "price": "$120",
+      "tags": ["peripherals", "gaming", "usb-c"]
+    },
+    {
+      "name": "Wireless Mouse",
+      "price": "$60",
+      "tags": ["ergonomic", "battery-powered"]
+    }
+  ]
+}
