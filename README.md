@@ -118,28 +118,3 @@ You directly get this as output
 ```
 
 </details>
-
-You can also prepare the XSE as a `store.xse.json`
-<details>
-<summary><b>View XSE as JSON</b></summary>
-  
-```json
-{
-  "store_name": "//h1",
-  "catalog": [
-    "//div[@class='product']",
-    {
-      "name": ".//h2",
-      "price": ".//span[@class='p']",
-      "tags": [
-        ".//li",
-        "."
-      ]
-    }
-  ]
-}
-```
-
-</details>
-
-But life is too short to debug opening and closing braces and commas for a scraping recipe.
