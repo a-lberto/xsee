@@ -82,16 +82,18 @@ Imagine you have a messy HTML page
   </section>
 </main>
 ```
+
 </details>
 
-Once you have found the XPaths that lead to your desired information and compiled the `store.xse.yaml`
+Once you have found the XPaths that lead to your desired information and compiled the `example.xse.yaml`
+
 ```yaml
 store_name: "//h1"
 catalog:
-  - "//div[@class='product']"    # Iterator: Find all product containers
-  - name: ".//h2"                # Relative Leaf: Extract title
-    price: ".//span[@class='p']" # Relative Leaf: Extract price
-    tags: [ ".//li",  "." ]
+  - "//div[contains(@class, 'product')]"
+  - name: ".//h2"
+    price: ".//span[@class='p']"
+    tags: [ ".//li", "." ]
 ```
 
 You directly get this as output
