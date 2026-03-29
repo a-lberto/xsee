@@ -1,5 +1,9 @@
 # XPath Structured Extraction
 
+<p align="center">
+  <img src="docs/images/logo.png" alt="Eye-glasses with attached multiple stacking lenses" width="600">
+</p>
+
 > XSE is to HTML what SQL is to Databases: A declarative way to query and shape unstructured (or deliberately obfuscated) web data into structured objects.
 
 XSE replaces procedural scraping scripts with a **structural contract**, treating the DOM as a queryable data source.
