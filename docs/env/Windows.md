@@ -1,5 +1,11 @@
 # Windows development environment
 
+Having `cmake` already available is a plus, otherwise `vcpkg` will fetch one.
+
+```powershell
+winget install Kitware.CMake
+```
+
 ## `vcpkg` + `WinLibs`
 
 ### Install `vcpkg` in `%LOCALAPPDATA%`
