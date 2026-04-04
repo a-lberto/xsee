@@ -15,7 +15,7 @@ using json = nlohmann::ordered_json;
 // --- Utilities ---
 
 std::string read_file(const std::string& path) {
-    std::ifstream in(path);
+    std::ifstream in(path, std::ios::binary); // Open in binary mode for UTF-8 safety
     if (!in.is_open()) {
         throw std::runtime_error("Could not open file: " + path);
     }
@@ -27,18 +27,18 @@ std::string read_file(const std::string& path) {
 std::string normalize_space(const std::string& str) {
     std::string result;
     bool in_space = false;
-    for (char c : str) {
+    for (unsigned char c : str) { // Use unsigned char for UTF-8 safety
         if (std::isspace(c)) {
             if (!in_space && !result.empty()) {
                 result += ' ';
                 in_space = true;
             }
         } else {
-            result += c;
+            result += (char)c;
             in_space = false;
         }
     }
-    if (!result.empty() && std::isspace(result.back())) result.pop_back();
+    if (!result.empty() && std::isspace((unsigned char)result.back())) result.pop_back();
     return result;
 }
 
@@ -115,7 +115,6 @@ json scrape_by_schema(xmlNodePtr node, const YAML::Node& schema) {
     return nullptr;
 }
 
-// --- Main with Argument Parsing ---
 
 int main(int argc, char* argv[]) {
     if (argc < 4) {
@@ -126,7 +125,6 @@ int main(int argc, char* argv[]) {
     std::string html_path = argv[1];
     std::string yaml_path;
 
-    // Simple check for --yaml flag
     for (int i = 1; i < argc; ++i) {
         if (std::string(argv[i]) == "--yaml" && i + 1 < argc) {
             yaml_path = argv[i + 1];
@@ -140,7 +138,18 @@ int main(int argc, char* argv[]) {
 
     try {
         std::string html_content = read_file(html_path);
-        htmlDocPtr doc = htmlReadMemory(html_content.c_str(), html_content.length(), NULL, NULL, HTML_PARSE_RECOVER | HTML_PARSE_NOERROR);
+        
+        htmlDocPtr doc = htmlReadMemory(
+            html_content.c_str(), 
+            (int)html_content.length(), 
+            html_path.c_str(), 
+            "UTF-8", 
+            HTML_PARSE_RECOVER | HTML_PARSE_NOERROR | HTML_PARSE_NOWARNING
+        );
+
+        if (!doc) {
+            throw std::runtime_error("Failed to parse HTML document.");
+        }
         
         YAML::Node schema = YAML::LoadFile(yaml_path);
         json output = scrape_by_schema(xmlDocGetRootElement(doc), schema);
