@@ -1,7 +1,7 @@
 # XPath Structured Extraction Engine
 
 <p align="center">
-  <img src="docs/images/logo.png" alt="Eye-glasses with attached multiple stacking lenses" width="600">
+  <img src="docs/images/logo.png" alt="Eye-glasses with attached multiple stacking lenses" width="300">
 </p>
 
 > XSEE is to HTML what SQL is to Databases: A declarative way to query and shape unstructured (or deliberately obfuscated) web data into structured objects.
