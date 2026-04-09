@@ -100,6 +100,13 @@ catalog:
     tags: [ ".//li", "." ]
 ```
 
+And run your engine of choice with
+
+```shell
+curl http://yourfavoritewebsite/ > input.html
+xsee input.html --yaml xsee.yaml
+```
+
 You directly get this as output
 
 <details>
