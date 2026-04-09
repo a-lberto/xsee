@@ -1,22 +1,22 @@
-# XPath Structured Extraction
+# XPath Structured Extraction Engine
 
 <p align="center">
   <img src="docs/images/logo.png" alt="Eye-glasses with attached multiple stacking lenses" width="600">
 </p>
 
-> XSE is to HTML what SQL is to Databases: A declarative way to query and shape unstructured (or deliberately obfuscated) web data into structured objects.
+> XSEE is to HTML what SQL is to Databases: A declarative way to query and shape unstructured (or deliberately obfuscated) web data into structured objects.
 
-XSE replaces procedural scraping scripts with a **structural contract**, treating the DOM as a queryable data source.
+XSEE replaces procedural scraping scripts with a **structural contract**, treating the DOM as a queryable data source.
 
-XSE is text first, and explicitly does no data processing other than extracting raw information for the DOM. Processing is left to be done to other tools of your choice.
+XSEE is text first, and explicitly does no data processing other than extracting raw information for the DOM. Processing is left to be done to other tools of your choice.
 
-XSE uses XPath 1.0 for best portability. The implementation of XSE applies a `normalize-space()` to the string extracted.
+XSEE uses XPath 1.0 for best portability. The implementation of XSEE applies a `normalize-space()` to the string extracted.
 
 ---
 
 ## The patterns
 
-XSE uses three simple patterns to map DOM elements to data:
+XSEE uses three simple patterns to map DOM elements to data:
 
 1. **Leaf**: `key: "xpath"` e.g. `title: "//h1"`, `url : "//a/@href"`
    
@@ -89,7 +89,7 @@ Imagine you have a messy HTML page
 
 </details>
 
-Once you have found the XPaths that lead to your desired information and compiled the `example.xse.yaml`
+Once you have found the XPaths that lead to your desired information and compiled the `example.xsee.yaml`
 
 ```yaml
 store_name: "//h1"
