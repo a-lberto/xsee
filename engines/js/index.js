@@ -4,10 +4,7 @@ const yaml = require("js-yaml");
 const fs = require("fs");
 const path = require("path");
 
-/**
- * Core XSE Engine
- */
-function xseEngine(html, schema) {
+function xseeEngine(html, schema) {
   const dom = new JSDOM(html);
   const doc = dom.window.document;
 
@@ -15,7 +12,7 @@ function xseEngine(html, schema) {
   const validateRelative = (rule) => {
     if (typeof rule === "string") {
       if (!rule.startsWith(".")) {
-        throw new Error(`XSE Context Leak: XPath "${rule}" must be relative (start with ./ or .// or .)`);
+        throw new Error(`XSEE Context Leak: XPath "${rule}" must be relative (start with ./ or .// or .)`);
       }
     } else if (Array.isArray(rule)) {
       validateRelative(rule[0]);
@@ -32,14 +29,14 @@ function xseEngine(html, schema) {
   // Use 9 (FIRST_ORDERED_NODE_TYPE) to get the first match specifically
   const result = doc.evaluate(xpath, context, null, 9, null); 
 
-  // Handle Boolean, Number, String results (though rare in basic XSE)
+  // Handle Boolean, Number, String results (though rare in basic XSEE)
   if (result.resultType === 1) return result.numberValue;
   if (result.resultType === 2) return result.stringValue.trim();
   if (result.resultType === 3) return result.booleanValue;
 
   const node = result.singleNodeValue; // Use singleNodeValue for type 9
   
-  // XSE Requirement: normalize-space() equivalent
+  // XSEE Requirement: normalize-space() equivalent
   return node ? node.textContent.replace(/\s+/g, ' ').trim() : null;
 };
 
@@ -107,7 +104,7 @@ function main() {
 
   // Validation
   if (!htmlPath || !yamlPath) {
-    console.error("Usage: node drivers/js/index.js <input.html> --yaml <schema.xse.yaml>");
+    console.error("Usage: node drivers/js/index.js <input.html> --yaml <schema.xsee.yaml>");
     process.exit(1);
   }
 
@@ -120,12 +117,11 @@ function main() {
     if (!fs.existsSync(absoluteYamlPath)) throw new Error(`YAML file not found: ${absoluteYamlPath}`);
 
     const inputHtml = fs.readFileSync(absoluteHtmlPath, "utf-8");
-    const xseYaml = fs.readFileSync(absoluteYamlPath, "utf-8");
+    const xseeYaml = fs.readFileSync(absoluteYamlPath, "utf-8");
 
-    const schema = yaml.load(xseYaml);
-    const output = xseEngine(inputHtml, schema);
+    const schema = yaml.load(xseeYaml);
+    const output = xseeEngine(inputHtml, schema);
 
-    // Print final JSON to stdout
     console.log(JSON.stringify(output, null, 2));
 
   } catch (e) {

@@ -32,7 +32,7 @@ if ($Test) {
     # Define paths relative to the root where the script is run
     $EXE = "build\bin\main.exe"
     $INPUT = "..\..\tests\example\input.html"
-    $YAML = "..\..\tests\example\example.xse.yaml"
+    $YAML = "..\..\tests\example\example.xsee.yaml"
 
     if (Test-Path $EXE) {
         # Running the command exactly as requested

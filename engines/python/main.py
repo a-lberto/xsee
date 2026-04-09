@@ -12,10 +12,9 @@ import sys
 from lxml import html
 
 def validate_relative(rule):
-    """Enforces the XSE rule: extractors must be relative to parent."""
     if isinstance(rule, str):
         if not rule.startswith("."):
-            raise ValueError(f"XSE Context Leak: XPath '{rule}' must be relative (start with ./ or .// or .)")
+            raise ValueError(f"XSEE Context Leak: XPath '{rule}' must be relative (start with ./ or .// or .)")
     elif isinstance(rule, list):
         for item in rule:
             validate_relative(item)
@@ -24,7 +23,6 @@ def validate_relative(rule):
             validate_relative(val)
 
 def extract_leaf(tree, xpath):
-    """Extracts text content or attribute, applying normalize-space logic."""
     results = tree.xpath(xpath)
     if not results:
         return None
@@ -70,10 +68,10 @@ def scrape_by_schema(content, schema):
     return None
 
 def main():
-    parser = argparse.ArgumentParser(description="XSE Python Engine")
+    parser = argparse.ArgumentParser(description="XPath Structured Extraction Engine")
     parser.add_index = False # Not a standard argparse arg, just for clarity
     parser.add_argument("html_file", help="Path to the input HTML file")
-    parser.add_argument("--yaml", required=True, help="Path to the XSE YAML schema")
+    parser.add_argument("--yaml", required=True, help="Path to the XSEE YAML schema")
     
     args = parser.parse_args()
 

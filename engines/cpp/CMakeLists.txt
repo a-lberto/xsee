@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.15)
 set(VCPKG_TARGET_TRIPLET "x64-mingw-static" CACHE STRING "")
 set(VCPKG_HOST_TRIPLET "x64-mingw-static" CACHE STRING "")
 
-project(XseEngine)
+project(XSEE)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -22,4 +22,3 @@ target_link_libraries(main PRIVATE
     nlohmann_json::nlohmann_json
     yaml-cpp::yaml-cpp
 )
-
