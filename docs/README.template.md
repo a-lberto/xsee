@@ -53,6 +53,13 @@ Once you have found the XPaths that lead to your desired information and compile
 
 :[Config](../tests/example/example.xsee.yaml)
 
+And run your engine of choice with
+
+```shell
+curl http://yourfavoritewebsite/ > input.html
+xsee input.html --yaml xsee.yaml
+```
+
 You directly get this as output
 
 <details>
