@@ -22,10 +22,6 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Install dependencies
-        run: |
-          pip install markdown-include
-
       - name: Render Markdown
         run: |
           python scripts/render_readme.py
