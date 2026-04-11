@@ -65,10 +65,21 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: 'pnpm'
+          cache-dependency-path: engines/js/pnpm-lock.yaml
+
+      - name: Install JS dependencies
+        run: pnpm install
+        working-directory: engines/js
 
       - name: Run Python Integration Tests
         shell: pwsh
