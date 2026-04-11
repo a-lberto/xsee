@@ -9,7 +9,12 @@ import json
 import yaml
 import argparse
 import sys
+import io
 from lxml import html
+
+# Fix for Windows/certain terminals to ensure utf-8 output piping
+if sys.stdout.encoding != 'utf-8':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 def validate_relative(rule):
     if isinstance(rule, str):
@@ -27,27 +32,33 @@ def extract_leaf(tree, xpath):
     if not results:
         return None
     
-    # If it's an attribute or string result
     if isinstance(results[0], str):
         return results[0].strip()
     
-    # If it's an element, get text and normalize whitespace
+    # .text_content() is better for extracting all nested text
     text = results[0].text_content()
     return " ".join(text.split()).strip()
 
 def xsee(content, schema):
-    # If content is already an lxml element (passed from iterator), use it
-    # Otherwise, parse the raw HTML string
-    tree = content if hasattr(content, 'xpath') else html.fromstring(content)
+    # Check if content is raw bytes or a string (HTML)
+    if isinstance(content, (str, bytes)):
+        try:
+            # Force lxml to treat the input as UTF-8
+            parser = html.HTMLParser(encoding='utf-8')
+            if isinstance(content, str):
+                content = content.encode('utf-8')
+            tree = html.fromstring(content, parser=parser)
+        except Exception:
+            return None
+    else:
+        tree = content
     
-    # 1. Leaf Pattern
     if isinstance(schema, str):
         return extract_leaf(tree, schema)
 
-    # 3. Iterator Pattern (2-tuple list)
     if isinstance(schema, list):
         if len(schema) != 2:
-            return [] # Or raise error based on preference
+            return []
         
         selector_xpath, extractor = schema
         validate_relative(extractor)
@@ -58,7 +69,6 @@ def xsee(content, schema):
             
         return [xsee(c, extractor) for c in containers]
 
-    # 2. Group Pattern
     if isinstance(schema, dict):
         result = {}
         for key, sub_rule in schema.items():
@@ -69,22 +79,22 @@ def xsee(content, schema):
 
 def main():
     parser = argparse.ArgumentParser(description="XPath Structured Extraction Engine")
-    parser.add_index = False # Not a standard argparse arg, just for clarity
     parser.add_argument("html_file", help="Path to the input HTML file")
     parser.add_argument("--yaml", required=True, help="Path to the XSEE YAML schema")
     
     args = parser.parse_args()
 
     try:
-        with open(args.html_file, 'r', encoding='utf-8') as f:
-            html_content = f.read()
+        # Read HTML as raw bytes to prevent premature/incorrect decoding
+        with open(args.html_file, 'rb') as f:
+            html_bytes = f.read()
+            
         with open(args.yaml, 'r', encoding='utf-8') as f:
             schema = yaml.safe_load(f)
 
-        data = xsee(html_content, schema)
+        data = xsee(html_bytes, schema)
         
-        # Output structured JSON to stdout
-        print(json.dumps(data, indent=2))
+        print(json.dumps(data, indent=2, ensure_ascii=False))
 
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
