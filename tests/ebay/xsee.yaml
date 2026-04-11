@@ -1,0 +1,8 @@
+listings:
+- "//ul[contains(@class, 'srp-results')]//li[contains(@class, 's-card')]"
+- title: ".//div[@role='heading']/span[1]"
+  sold: ".//div[contains(@class, 's-card__caption')]/span"
+  subtitle: ".//div[contains(@class, 's-card__subtitle')]"
+  price: ".//span[contains(@class, 's-card__price')]"
+  url: ".//a[contains(@class, 's-card__link')]/@href"
+  img: ".//img[contains(@class, 's-card__image')]/@src"
