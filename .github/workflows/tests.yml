@@ -31,7 +31,7 @@ jobs:
       - name: Compile C++ Engine
         shell: pwsh
         run: |
-          cmake -S engines/cpp -B engines/cpp/build --preset release
+          cmake -S engines/cpp -B engines/cpp/build --preset vcpkg-ninja
           cmake --build engines/cpp/build
 
       - name: Upload Engine Binary
