@@ -131,3 +131,9 @@ You directly get this as output
 ```
 
 </details>
+
+### References
+
+- [XPath Spec](https://www.w3.org/TR/1999/REC-xpath-19991116/)
+- [YAML Spec](https://yaml.org/spec/)
+- [JSON Spec](https://www.json.org/json-en.html)
