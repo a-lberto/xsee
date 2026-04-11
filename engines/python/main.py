@@ -35,7 +35,7 @@ def extract_leaf(tree, xpath):
     text = results[0].text_content()
     return " ".join(text.split()).strip()
 
-def scrape_by_schema(content, schema):
+def xsee(content, schema):
     # If content is already an lxml element (passed from iterator), use it
     # Otherwise, parse the raw HTML string
     tree = content if hasattr(content, 'xpath') else html.fromstring(content)
@@ -56,13 +56,13 @@ def scrape_by_schema(content, schema):
         if not containers:
             return []
             
-        return [scrape_by_schema(c, extractor) for c in containers]
+        return [xsee(c, extractor) for c in containers]
 
     # 2. Group Pattern
     if isinstance(schema, dict):
         result = {}
         for key, sub_rule in schema.items():
-            result[key] = scrape_by_schema(tree, sub_rule)
+            result[key] = xsee(tree, sub_rule)
         return result
 
     return None
@@ -81,7 +81,7 @@ def main():
         with open(args.yaml, 'r', encoding='utf-8') as f:
             schema = yaml.safe_load(f)
 
-        data = scrape_by_schema(html_content, schema)
+        data = xsee(html_content, schema)
         
         # Output structured JSON to stdout
         print(json.dumps(data, indent=2))

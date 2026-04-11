@@ -4,11 +4,10 @@ const yaml = require("js-yaml");
 const fs = require("fs");
 const path = require("path");
 
-function xseeEngine(html, schema) {
+function xsee(html, schema) {
   const dom = new JSDOM(html);
   const doc = dom.window.document;
 
-  // Enforces context isolation rule
   const validateRelative = (rule) => {
     if (typeof rule === "string") {
       if (!rule.startsWith(".")) {
@@ -24,21 +23,19 @@ function xseeEngine(html, schema) {
     }
   };
 
-  // Helper to evaluate XPath and get text/attribute
- const extractLeaf = (context, xpath) => {
+  const extractLeaf = (context, xpath) => {
   // Use 9 (FIRST_ORDERED_NODE_TYPE) to get the first match specifically
-  const result = doc.evaluate(xpath, context, null, 9, null); 
+    const result = doc.evaluate(xpath, context, null, 9, null); 
 
-  // Handle Boolean, Number, String results (though rare in basic XSEE)
-  if (result.resultType === 1) return result.numberValue;
-  if (result.resultType === 2) return result.stringValue.trim();
-  if (result.resultType === 3) return result.booleanValue;
+    // Handle Boolean, Number, String results (though rare in basic XSEE)
+    if (result.resultType === 1) return result.numberValue;
+    if (result.resultType === 2) return result.stringValue.trim();
+    if (result.resultType === 3) return result.booleanValue;
 
-  const node = result.singleNodeValue; // Use singleNodeValue for type 9
-  
-  // XSEE Requirement: normalize-space() equivalent
-  return node ? node.textContent.replace(/\s+/g, ' ').trim() : null;
-};
+    const node = result.singleNodeValue; // Use singleNodeValue for type 9
+    
+    return node ? node.textContent.replace(/\s+/g, ' ').trim() : null;
+  };
 
   const processNode = (context, rule) => {
     // 1. Leaf Pattern
@@ -46,11 +43,9 @@ function xseeEngine(html, schema) {
       return extractLeaf(context, rule);
     }
 
-    // 3. Iterator Pattern (2-tuple Array)
     if (Array.isArray(rule)) {
       const [selector, extractor] = rule;
       
-      // Enforce relative path rule for extractors to prevent context leak
       validateRelative(extractor); 
 
       const nodes = [];
@@ -70,7 +65,6 @@ function xseeEngine(html, schema) {
         .filter(res => res !== null); 
     }
 
-    // 2. Group Pattern
     if (typeof rule === "object" && rule !== null) {
       const groupResult = {};
       for (const [key, subRule] of Object.entries(rule)) {
@@ -85,17 +79,15 @@ function xseeEngine(html, schema) {
   return processNode(doc, schema);
 }
 
-// --- CLI Parsing & Execution ---
 function main() {
   const args = process.argv.slice(2);
   let htmlPath = null;
   let yamlPath = null;
 
-  // Simple argument parser
   for (let i = 0; i < args.length; i++) {
     if (args[i] === "--yaml" && i + 1 < args.length) {
       yamlPath = args[i + 1];
-      i++; // skip the value
+      i++; 
     } else if (!htmlPath) {
       // First non-flag argument is treated as the input HTML
       htmlPath = args[i];
@@ -109,7 +101,6 @@ function main() {
   }
 
   try {
-    // Resolve paths relative to the current working directory (project root)
     const absoluteHtmlPath = path.resolve(process.cwd(), htmlPath);
     const absoluteYamlPath = path.resolve(process.cwd(), yamlPath);
 
@@ -120,7 +111,7 @@ function main() {
     const xseeYaml = fs.readFileSync(absoluteYamlPath, "utf-8");
 
     const schema = yaml.load(xseeYaml);
-    const output = xseeEngine(inputHtml, schema);
+    const output = xsee(inputHtml, schema);
 
     console.log(JSON.stringify(output, null, 2));
 

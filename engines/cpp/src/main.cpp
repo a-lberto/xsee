@@ -12,9 +12,7 @@
 
 using json = nlohmann::ordered_json;
 
-// --- Utilities ---
-
-std::string read_file(const std::string& path) {
+std::string readFile(const std::string& path) {
     std::ifstream in(path, std::ios::binary); // Open in binary mode for UTF-8 safety
     if (!in.is_open()) {
         throw std::runtime_error("Could not open file: " + path);
@@ -24,7 +22,7 @@ std::string read_file(const std::string& path) {
     return buffer.str();
 }
 
-std::string normalize_space(const std::string& str) {
+std::string normalizeSpace(const std::string& str) {
     std::string result;
     bool in_space = false;
     for (unsigned char c : str) { // Use unsigned char for UTF-8 safety
@@ -42,22 +40,20 @@ std::string normalize_space(const std::string& str) {
     return result;
 }
 
-void validate_relative(const YAML::Node& node) {
+void validateRelative(const YAML::Node& node) {
     if (node.IsScalar()) {
         std::string val = node.as<std::string>();
         if (val.find(".") != 0) {
             throw std::runtime_error("XSE Context Leak: XPath '" + val + "' must be relative (start with .)");
         }
     } else if (node.IsSequence()) {
-        for (const auto& item : node) validate_relative(item);
+        for (const auto& item : node) validateRelative(item);
     } else if (node.IsMap()) {
-        for (const auto& it : node) validate_relative(it.second);
+        for (const auto& it : node) validateRelative(it.second);
     }
 }
 
-// --- Core Engine ---
-
-json scrape_leaf(xmlNodePtr node, const std::string& xpath_str) {
+json scrapeLeaf(xmlNodePtr node, const std::string& xpath_str) {
     xmlXPathContextPtr context = xmlXPathNewContext(node->doc);
     context->node = node;
     xmlXPathObjectPtr result = xmlXPathEvalExpression((const xmlChar*)xpath_str.c_str(), context);
@@ -69,7 +65,7 @@ json scrape_leaf(xmlNodePtr node, const std::string& xpath_str) {
     }
 
     xmlChar* raw = xmlNodeGetContent(result->nodesetval->nodeTab[0]);
-    std::string text = normalize_space((char*)raw);
+    std::string text = normalizeSpace((char*)raw);
     xmlFree(raw);
     
     xmlXPathFreeObject(result);
@@ -77,9 +73,9 @@ json scrape_leaf(xmlNodePtr node, const std::string& xpath_str) {
     return text;
 }
 
-json scrape_by_schema(xmlNodePtr node, const YAML::Node& schema) {
+json xsee(xmlNodePtr node, const YAML::Node& schema) {
     if (schema.IsScalar()) {
-        return scrape_leaf(node, schema.as<std::string>());
+        return scrapeLeaf(node, schema.as<std::string>());
     }
 
     if (schema.IsSequence()) {
@@ -87,7 +83,7 @@ json scrape_by_schema(xmlNodePtr node, const YAML::Node& schema) {
         
         std::string selector = schema[0].as<std::string>();
         YAML::Node extractor = schema[1];
-        validate_relative(extractor);
+        validateRelative(extractor);
 
         xmlXPathContextPtr context = xmlXPathNewContext(node->doc);
         context->node = node;
@@ -96,7 +92,7 @@ json scrape_by_schema(xmlNodePtr node, const YAML::Node& schema) {
         json list = json::array();
         if (result && !xmlXPathNodeSetIsEmpty(result->nodesetval)) {
             for (int i = 0; i < result->nodesetval->nodeNr; ++i) {
-                list.push_back(scrape_by_schema(result->nodesetval->nodeTab[i], extractor));
+                list.push_back(xsee(result->nodesetval->nodeTab[i], extractor));
             }
         }
         xmlXPathFreeObject(result);
@@ -107,7 +103,7 @@ json scrape_by_schema(xmlNodePtr node, const YAML::Node& schema) {
     if (schema.IsMap()) {
         json obj = json::object();
         for (auto it = schema.begin(); it != schema.end(); ++it) {
-            obj[it->first.as<std::string>()] = scrape_by_schema(node, it->second);
+            obj[it->first.as<std::string>()] = xsee(node, it->second);
         }
         return obj;
     }
@@ -137,7 +133,7 @@ int main(int argc, char* argv[]) {
     }
 
     try {
-        std::string html_content = read_file(html_path);
+        std::string html_content = readFile(html_path);
         
         htmlDocPtr doc = htmlReadMemory(
             html_content.c_str(), 
@@ -152,7 +148,7 @@ int main(int argc, char* argv[]) {
         }
         
         YAML::Node schema = YAML::LoadFile(yaml_path);
-        json output = scrape_by_schema(xmlDocGetRootElement(doc), schema);
+        json output = xsee(xmlDocGetRootElement(doc), schema);
         
         std::cout << output.dump(2) << std::endl;
 
