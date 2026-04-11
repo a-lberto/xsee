@@ -51,7 +51,7 @@ Imagine you have a messy HTML page
 
 Once you have found the XPaths that lead to your desired information and compiled the `example.xsee.yaml`
 
-:[Config](../tests/example/example.xsee.yaml)
+:[Config](../tests/example/xsee.yaml)
 
 And run your engine of choice with
 
@@ -68,3 +68,9 @@ You directly get this as output
 :[Expected Output](../tests/example/expected.json)
 
 </details>
+
+### References
+
+- [XPath Spec](https://www.w3.org/TR/1999/REC-xpath-19991116/)
+- [YAML Spec](https://yaml.org/spec/)
+- [JSON Spec](https://www.json.org/json-en.html)
