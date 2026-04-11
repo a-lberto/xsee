@@ -7,9 +7,14 @@ on:
     branches: [ main ]
 
 jobs:
-  build-cpp:
+  build-and-test:
+    name: Build C++ and Run Tests
     runs-on: windows-latest
+    
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Install winlibs
         uses: bwoodsend/setup-winlibs-action@v1
         with:
@@ -25,35 +30,11 @@ jobs:
           }
           echo "VCPKG_ROOT=$vcpkgDir" >> $env:GITHUB_ENV
 
-      - name: Checkout code
-        uses: actions/checkout@v4
-
       - name: Compile C++ Engine
         shell: pwsh
         run: |
           cmake -S engines/cpp -B engines/cpp/build --preset vcpkg-ninja
           cmake --build engines/cpp/build
-
-      - name: Upload Engine Binary
-        uses: actions/upload-artifact@v4
-        with:
-          name: cpp-engine-binary
-          # Matches your preset's binaryDir: ${sourceDir}/build
-          path: engines/cpp/build/main.exe
-          retention-days: 1
-
-  run-tests:
-    needs: build-cpp
-    runs-on: windows-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Download Engine Binary
-        uses: actions/download-artifact@v4
-        with:
-          name: cpp-engine-binary
-          path: engines/cpp/build
 
       - name: Install uv
         uses: astral-sh/setup-uv@v3
