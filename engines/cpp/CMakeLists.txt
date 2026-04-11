@@ -12,7 +12,9 @@ find_package(yaml-cpp CONFIG REQUIRED)
 set(XSEE_ROOT_DIR "${PROJECT_SOURCE_DIR}/../..")
 set(EXAMPLE_TEST_DIR "${XSEE_ROOT_DIR}/tests/example")
 
-add_executable(main main.cpp)
+add_executable(main src/main.cpp)
+
+target_include_directories(main PRIVATE src)
 
 target_link_libraries(main PRIVATE 
     LibXml2::LibXml2 
