@@ -27,4 +27,20 @@ Extract [latest](https://winlibs.com/) `GCC (with POSIX threads) + LLVM/Clang/LL
 
 ### Compile
 
-Move into `drivers/cpp` and run `compile.ps1` to compile. Executable is in `drivers/cpp/build/bin`.
+Move into `engines/cpp` and to fetch and build dependencies run
+
+```powershell
+cmake --preset vcpkg-ninja
+```
+
+To build the executable run
+
+```powershell
+cmake --build --preset release
+```
+
+And to test it
+
+```powershell
+ctest --preset run-tests
+```

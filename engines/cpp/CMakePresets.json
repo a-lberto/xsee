@@ -1,16 +1,57 @@
 {
-  "version": 3,
+  "version": 6,
   "configurePresets": [
     {
       "name": "vcpkg-ninja",
       "displayName": "Vcpkg + Ninja",
-      "description": "Uses Ninja generator with vcpkg toolchain",
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
-        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        "VCPKG_TARGET_TRIPLET": "x64-mingw-static",
+        "VCPKG_HOST_TRIPLET": "x64-mingw-static",
+        "CMAKE_TOOLCHAIN_FILE": "$env{LOCALAPPDATA}/vcpkg/scripts/buildsystems/vcpkg.cmake",
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++"
       }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "release",
+      "configurePreset": "vcpkg-ninja"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "run-tests",
+      "configurePreset": "vcpkg-ninja",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": false
+      }
+    }
+  ],
+  "workflowPresets": [
+    {
+      "name": "all",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "vcpkg-ninja"
+        },
+        {
+          "type": "build",
+          "name": "release"
+        },
+        {
+          "type": "test",
+          "name": "run-tests"
+        }
+      ]
     }
   ]
 }
