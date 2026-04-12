@@ -1,18 +1,57 @@
-# XPath Structured Extraction Engine
+# xsee
 
 <p align="center">
   <img src="docs/images/logo.png" alt="Eye-glasses with attached multiple stacking lenses" width="300">
 </p>
 
-> XSEE is to HTML what SQL is to Databases: A declarative way to query and shape unstructured (or deliberately obfuscated) web data into structured objects.
+Tired of writing yet another scraping script? Tired to recompile your scrapers after an XPath changes?
+
+By using a simple strict YAML format as input, `xsee` allows you to turn an HTML page into a fine tuned JSON.
+
+No release yet as it is still in very early development.
+
+---
+
+## Example
+
+Imagine you have a messy HTML page
+
+<details>
+<summary><b>View Messy Source HTML</b></summary>
+
+:[Input HTML](../tests/example/input.html)
+
+</details>
+
+Once you have found the XPaths that lead to your desired information and compiled the `xsee.yaml`
+
+:[Config](../tests/example/xsee.yaml)
+
+And run `xsee` with
+
+```shell
+curl http://yourfavoritewebsite/ > input.html
+xsee input.html --yaml xsee.yaml
+```
+
+You directly get this as output
+
+<details>
+<summary><b>View Structured JSON Output</b></summary>
+
+:[Expected Output](../tests/example/expected.json)
+
+</details>
+
+---
+
+## Rules of thumb
 
 XSEE replaces procedural scraping scripts with a **structural contract**, treating the DOM as a queryable data source.
 
 XSEE is text first, and explicitly does no data processing other than extracting raw information for the DOM. Processing is left to be done to other tools of your choice.
 
 XSEE uses XPath 1.0 for best portability. The implementation of XSEE applies a `normalize-space()` to the string extracted.
-
----
 
 ## The patterns
 
@@ -36,38 +75,6 @@ XSEE uses three simple patterns to map DOM elements to data:
    
    If selector finds no results, returns `[]`, if extractor finds no results, it returns `[]`. Leafs inside groups are handled normally as `null` when leaf is not found.
 
----
-
-## Example
-
-Imagine you have a messy HTML page
-
-<details>
-<summary><b>View Messy Source HTML</b></summary>
-
-:[Input HTML](../tests/example/input.html)
-
-</details>
-
-Once you have found the XPaths that lead to your desired information and compiled the `example.xsee.yaml`
-
-:[Config](../tests/example/xsee.yaml)
-
-And run your engine of choice with
-
-```shell
-curl http://yourfavoritewebsite/ > input.html
-xsee input.html --yaml xsee.yaml
-```
-
-You directly get this as output
-
-<details>
-<summary><b>View Structured JSON Output</b></summary>
-
-:[Expected Output](../tests/example/expected.json)
-
-</details>
 
 ### References
 
