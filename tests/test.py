@@ -10,7 +10,7 @@ PROJECT_ROOT = TESTS_DIR.parent
 ENGINES = {
     "python": ["uv", "run", str(PROJECT_ROOT / "engines/python/src/main.py")],
     "nodejs": ["node", str(PROJECT_ROOT / "engines/js/src/index.js")],
-    "cpp": [str(PROJECT_ROOT / "engines/cpp/build/main")]
+    "cpp": [str(PROJECT_ROOT / "engines/cpp/build/xsee")]
 }
 
 def get_test_scenarios():
