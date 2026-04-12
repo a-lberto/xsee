@@ -10,6 +10,24 @@ By using a simple strict YAML format as input, `xsee` allows you to turn an HTML
 
 No release yet as it is still in very early development.
 
+## Project structure
+
+```text
+xsee/
+├── docs
+├── engines                   # Different implementations
+│   ├── cpp
+│   ├── js
+│   └── python
+├── scripts                   # Small utility scripts
+└── tests                     # Shared tests folder
+    ├── example               # Regression test examples
+    │   ├── expected.json     # Expected output
+    │   ├── input.html        # Input to process
+    │   └── xsee.yaml         # Minimal scraping config
+    └── test.py               # Runs for every engine, every test
+```
+
 ---
 
 ## Example
@@ -76,7 +94,7 @@ XSEE uses three simple patterns to map DOM elements to data:
    If selector finds no results, returns `[]`, if extractor finds no results, it returns `[]`. Leafs inside groups are handled normally as `null` when leaf is not found.
 
 
-### References
+## References
 
 - [XPath Spec](https://www.w3.org/TR/1999/REC-xpath-19991116/)
 - [YAML Spec](https://yaml.org/spec/)
