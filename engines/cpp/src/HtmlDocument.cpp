@@ -4,12 +4,13 @@
 #include <libxml/xpathInternals.h>
 #include <stdexcept>
 
-HtmlDocument::HtmlDocument(const std::string& content, const std::string& path) {
-    doc_ptr = htmlReadMemory(
-        content.c_str(), (int)content.length(), 
-        path.c_str(), "UTF-8", 
+HtmlDocument::HtmlDocument(const std::string& path) {
+    doc_ptr = htmlReadFile(
+        path.c_str(), 
+        "UTF-8", 
         HTML_PARSE_RECOVER | HTML_PARSE_NOERROR | HTML_PARSE_NOWARNING
     );
+    
     if (!doc_ptr) throw std::runtime_error("Failed to parse HTML document");
 }
 

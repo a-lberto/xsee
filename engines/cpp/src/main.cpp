@@ -1,6 +1,7 @@
-#include <iostream>
 #include "HtmlDocument.h"
 #include "Engine.h"
+
+#include <iostream>
 
 int main(int argc, char* argv[]) {
     if (argc < 4) {
@@ -21,13 +22,13 @@ int main(int argc, char* argv[]) {
         if (yaml_path.empty()) throw std::runtime_error("Missing --yaml argument");
 
         // Load HTML into the Document wrapper
-        HtmlDocument doc(Engine::readFile(html_path), html_path);
+        HtmlDocument doc(html_path);
 
         // Load the Schema
         YAML::Node schema = YAML::LoadFile(yaml_path);
 
         // Execute the Engine
-        json output = Engine::execute(doc, schema);
+        json output = Engine::run(doc, schema);
 
         // Output the result
         std::cout << output.dump(2) << std::endl;

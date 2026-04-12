@@ -12,15 +12,6 @@ using json = nlohmann::ordered_json;
 
 class Engine {
 public:
-    // --- Utilities ---
-    static std::string readFile(const std::string& path) {
-        std::ifstream in(path, std::ios::binary);
-        if (!in.is_open()) throw std::runtime_error("File not found: " + path);
-        std::stringstream buffer;
-        buffer << in.rdbuf();
-        return buffer.str();
-    }
-
     static std::string normalizeSpace(const std::string& str) {
         std::string result;
         bool in_space = false;
@@ -40,7 +31,7 @@ public:
     }
 
     // --- Core Functionality ---
-    static json execute(const HtmlDocument& doc, const YAML::Node& schema) {
+    static json run(const HtmlDocument& doc, const YAML::Node& schema) {
         return process(doc, doc.getRoot(), schema);
     }
 

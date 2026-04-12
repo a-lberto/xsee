@@ -8,7 +8,7 @@ class HtmlDocument {
 public:
     struct HtmlElement { void* ptr; };
 
-    explicit HtmlDocument(const std::string& content, const std::string& path);
+    explicit HtmlDocument(const std::string& path);
     ~HtmlDocument();
 
     HtmlElement getRoot() const;
