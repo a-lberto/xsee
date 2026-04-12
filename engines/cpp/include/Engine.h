@@ -1,7 +1,7 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include "HtmlDocument.h"
+#include "html.h"
 #include <yaml-cpp/yaml.h>
 #include <nlohmann/json.hpp>
 #include <string>
@@ -31,7 +31,7 @@ public:
     }
 
     // --- Core Functionality ---
-    static json run(const HtmlDocument& doc, const YAML::Node& schema) {
+    static json run(const html::Document& doc, const YAML::Node& schema) {
         return process(doc, doc.getRoot(), schema);
     }
 
@@ -47,7 +47,7 @@ private:
         }
     }
 
-    static json process(const HtmlDocument& doc, HtmlDocument::HtmlElement element, const YAML::Node& schema) {
+    static json process(const html::Document& doc, html::Element element, const YAML::Node& schema) {
         if (schema.IsScalar()) {
             std::string raw = doc.getRawXPathContent(element, schema.as<std::string>());
             std::string clean = normalizeSpace(raw);

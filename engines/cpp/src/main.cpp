@@ -1,4 +1,4 @@
-#include "HtmlDocument.h"
+#include "html.h"
 #include "Engine.h"
 
 #include <iostream>
@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
         if (yaml_path.empty()) throw std::runtime_error("Missing --yaml argument");
 
         // Load HTML into the Document wrapper
-        HtmlDocument doc(html_path);
+        html::Document doc(html_path);
 
         // Load the Schema
         YAML::Node schema = YAML::LoadFile(yaml_path);

@@ -13,7 +13,7 @@ set(XSEE_ROOT_DIR "${PROJECT_SOURCE_DIR}/../..")
 set(EXAMPLE_TEST_DIR "${XSEE_ROOT_DIR}/tests/example")
 
 include_directories(include)
-add_executable(xsee src/main.cpp src/HtmlDocument.cpp)
+add_executable(xsee src/main.cpp src/html.cpp)
 
 target_include_directories(xsee PRIVATE src)
 
