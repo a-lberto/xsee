@@ -1,8 +1,15 @@
-# xsee
 
 <p align="center">
   <img src="docs/images/logo.png" alt="Eye-glasses with attached multiple stacking lenses" width="300">
 </p>
+
+<h1 align="center">xsee</h1>
+
+<p align="center">
+  XPaths in a YAML get you clean JSON from HTML.
+</p>
+
+---
 
 Tired of writing yet another scraping script? Tired to recompile your scrapers after an XPath changes?
 
